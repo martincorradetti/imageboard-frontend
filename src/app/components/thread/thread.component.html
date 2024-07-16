@@ -1,31 +1,33 @@
-<ng-container *ngIf="isLoading">Loading...</ng-container>
+<div *ngIf="isLoadingThreads">Loading threads...</div>
+<div *ngIf="errorMessage">{{ errorMessage }}</div>
+<div *ngIf="isLoadingThread">Loading thread details...</div>
 
-<ng-container *ngIf="errorMessage">{{ errorMessage }}</ng-container>
-
-<ng-container *ngIf="!isLoading && !errorMessage">
-
-  <div *ngIf="!thread">
-    <h2>Threads in {{ forum.name }}</h2>
-    <div *ngIf="threads.length === 0">No threads yet. Start a discussion!</div>
-    <div *ngFor="let thread of threads">
-      <a [routerLink]="['.', thread.id]">
-        <h3>{{ thread.title }}</h3>
-      </a>
-    </div>
+<ng-container *ngIf="!isLoadingThreads && !errorMessage">
+  <div *ngIf="threads$ | async as threads">
+    <h2>Threads in {{ forum?.name }}</h2>
+    <p *ngIf="threads.length === 0">No threads yet. Start a discussion!</p>
+    <ul *ngIf="threads.length > 0">
+      <li *ngFor="let thread of threads">
+        <a [routerLink]="['.', thread.id]">
+          <h3>{{ thread.title }}</h3>
+        </a>
+      </li>
+    </ul>
   </div>
+</ng-container>
 
-  <div *ngIf="thread">
+<ng-container *ngIf="!isLoadingThread && !errorMessage">
+  <div *ngIf="thread$ | async as thread">
     <h2>{{ thread.title }}</h2>
     <p>{{ thread.content }}</p>
 
-    <div *ngFor="let comment of comments">
-      <app-comment [comment]="{id: 0 ,name: "",threadId:content: "",id: 0,threadId: 0, name:}"></app-comment>
+    <div *ngFor="let comment of comments$ | async">
+      <app-comment [comment]="comment"></app-comment>
     </div>
 
     <app-post-form [threadId]="thread.id" [forum]="forum"></app-post-form>
     <router-outlet></router-outlet>
   </div>
-
 </ng-container>
 
 

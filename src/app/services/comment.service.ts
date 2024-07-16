@@ -25,6 +25,13 @@ export class CommentService {
     );
   }
 
+  getByThread(threadId: number): Observable<Comment[]> {
+    const url = `${this.commentsApiUrl}?threadId=${threadId}`; // Updated endpoint
+    return this.http.get<Comment[]>(url).pipe(
+      catchError(this.handleError<Comment[]>(`getByThread threadId=${threadId}`, []))
+    );
+  }
+
   create(comment: Comment): Observable<Comment> {
     return this.http.post<Comment>(this.commentsApiUrl, comment).pipe(
       catchError(this.handleError<Comment>('create'))
