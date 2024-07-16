@@ -1,8 +1,13 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
-import { Thread } from '../models/thread'; // Your Thread model/interface
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { Thread } from '../models/thread';
+
+interface ThreadFilters {
+  forumId?: number;
+  [key: string]: any; // Allow for future filters
+}
 
 @Injectable({
   providedIn: 'root'
@@ -21,14 +26,19 @@ export class ThreadService {
   getById(id: number): Observable<Thread> {
     const url = `${this.apiUrl}${id}`;
     return this.http.get<Thread>(url).pipe(
-      catchError(this.handleError<Thread>(`get id=${id}`))
+      catchError(this.handleError<Thread>(`getById id=${id}`))
     );
   }
 
-  getByForum(forumId: number): Observable<Thread[]> {
-    const url = `${this.apiUrl}${forumId}`;
-    return this.http.get<Thread[]>(url).pipe(
-      catchError(this.handleError<Thread[]>(`getByForum forumId=${forumId}`, []))
+  getByForum(forumId: number, filters?: ThreadFilters): Observable<Thread[]> {
+    let params = new HttpParams();
+    if (filters) {
+      for (const key in filters) {
+        params = params.append(key, filters[key]);
+      }
+    }
+    return this.http.get<Thread[]>(`${this.apiUrl}forum/${forumId}`, { params }).pipe(
+      catchError(this.handleError<Thread[]>('getByForum', []))
     );
   }
 
@@ -38,8 +48,8 @@ export class ThreadService {
     );
   }
 
-  update(thread: Thread): Observable<Thread> {
-    const url = `${this.apiUrl}${thread.id}`;
+  update(id: number, thread: Thread): Observable<Thread> {
+    const url = `${this.apiUrl}${id}`;
     return this.http.put<Thread>(url, thread).pipe(
       catchError(this.handleError<Thread>('update'))
     );
@@ -54,8 +64,8 @@ export class ThreadService {
 
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
-      console.error(error);
-      return of(result as T);
+      console.error(`${operation} failed: ${error.message}`); // log to console instead
+      return of(result as T); // let the app keep running by returning an empty result
     };
   }
 }

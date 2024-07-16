@@ -1,7 +1,7 @@
-import {inject, Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {forkJoin, Observable, of, switchMap} from 'rxjs';
-import {catchError, map} from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { Forum } from '../models/forum';
 
 @Injectable({
@@ -9,36 +9,39 @@ import { Forum } from '../models/forum';
 })
 export class ForumService {
   private forumsApiUrl = '/api/forums/'; // Base URL for forum API endpoints
-  private http = inject(HttpClient);
+
+  constructor(private http: HttpClient) {}
 
   getAll(): Observable<Forum[]> {
-    return this.http.get<Forum[]>(this.forumsApiUrl);
+    return this.http.get<Forum[]>(this.forumsApiUrl).pipe(
+      catchError(this.handleError<Forum[]>('getAll', []))
+    );
   }
 
   getById(id: number): Observable<Forum> {
     const url = `${this.forumsApiUrl}${id}`;
     return this.http.get<Forum>(url).pipe(
-      catchError(this.handleError<Forum>(`getForumById id=${id}`))
+      catchError(this.handleError<Forum>(`getById id=${id}`))
     );
   }
 
   create(forum: Forum): Observable<Forum> {
     return this.http.post<Forum>(this.forumsApiUrl, forum).pipe(
-      catchError(this.handleError<Forum>('createForum'))
+      catchError(this.handleError<Forum>('create'))
     );
   }
 
   update(forum: Forum): Observable<Forum> {
     const url = `${this.forumsApiUrl}${forum.id}`;
     return this.http.put<Forum>(url, forum).pipe(
-      catchError(this.handleError<Forum>('updateForum'))
+      catchError(this.handleError<Forum>('update'))
     );
   }
 
   delete(id: number): Observable<any> {
     const url = `${this.forumsApiUrl}${id}`;
     return this.http.delete<any>(url).pipe(
-      catchError(this.handleError<any>('deleteForum'))
+      catchError(this.handleError<any>('delete'))
     );
   }
 
@@ -49,4 +52,5 @@ export class ForumService {
     };
   }
 }
+
 
