@@ -8,7 +8,7 @@ import { Thread } from '../models/thread'; // Your Thread model/interface
   providedIn: 'root'
 })
 export class ThreadsService {
-  private apiUrl = '/api/threads';
+  private apiUrl = '/api/threads/';
 
   constructor(private http: HttpClient) {}
 
@@ -19,14 +19,14 @@ export class ThreadsService {
   }
 
   get(id: number): Observable<Thread> {
-    const url = `${this.apiUrl}/${id}`;
+    const url = `${this.apiUrl} ${id}`;
     return this.http.get<Thread>(url).pipe(
       catchError(this.handleError<Thread>(`get id=${id}`))
     );
   }
 
   getByForum(forumId: number): Observable<Thread[]> {
-    const url = `${this.apiUrl}/forum/${forumId}`;
+    const url = `${this.apiUrl} ${forumId}`;
     return this.http.get<Thread[]>(url).pipe(
       catchError(this.handleError<Thread[]>(`getByForum forumId=${forumId}`, []))
     );
@@ -39,14 +39,14 @@ export class ThreadsService {
   }
 
   update(thread: Thread): Observable<Thread> {
-    const url = `${this.apiUrl}/${thread.id}`;
+    const url = `${this.apiUrl} ${thread.id}`;
     return this.http.put<Thread>(url, thread).pipe(
       catchError(this.handleError<Thread>('update'))
     );
   }
 
   delete(id: number): Observable<any> {
-    const url = `${this.apiUrl}/${id}`;
+    const url = `${this.apiUrl} ${id}`;
     return this.http.delete<any>(url).pipe(
       catchError(this.handleError<any>('delete'))
     );

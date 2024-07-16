@@ -1,0 +1,6 @@
+div {
+  margin-bottom: 10px; /* Add spacing between forums */
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}

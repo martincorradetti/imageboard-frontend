@@ -1,0 +1,11 @@
+<form [formGroup]="postForm" (ngSubmit)="onSubmit()">
+  <mat-form-field *ngIf="!threadId">
+    <input matInput placeholder="Title" formControlName="title">
+  </mat-form-field>
+
+  <mat-form-field>
+    <textarea matInput placeholder="Content" formControlName="content"></textarea>
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" type="submit">Submit</button>
+</form>

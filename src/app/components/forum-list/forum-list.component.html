@@ -1,0 +1,6 @@
+<div *ngFor="let forum of forums">
+  <a [routerLink]="['/f', forum.id]">
+    <h2>{{ forum.name }}</h2>
+    <p>{{ forum.description }}</p>
+  </a>
+</div>

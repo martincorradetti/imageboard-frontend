@@ -27,6 +27,7 @@
               }
             ],
             "styles": [
+              "@angular/material/prebuilt-themes/azure-blue.css",
               "src/styles.css"
             ],
             "scripts": []
@@ -62,7 +63,8 @@
               "buildTarget": "imageboard-frontend:build:production"
             },
             "development": {
-              "buildTarget": "imageboard-frontend:build:development"
+              "buildTarget": "imageboard-frontend:build:development",
+                "proxyConfig": "src/proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"
@@ -85,6 +87,7 @@
               }
             ],
             "styles": [
+              "@angular/material/prebuilt-themes/azure-blue.css",
               "src/styles.css"
             ],
             "scripts": []
