@@ -4,8 +4,8 @@ import { Thread } from '../../models/thread';
 import { ThreadsService } from '../../services/threads.service';
 import { Comment } from '../../models/comment';
 import { CommentsService } from '../../services/comments.service';
-import {PostFormComponent} from "../../components/post-form/post-form.component";
-import {NgForOf, NgIf} from "@angular/common";
+import { PostFormComponent } from "../../components/post-form/post-form.component";
+import { NgForOf, NgIf } from "@angular/common";
 
 @Component({
   selector: 'app-thread',
@@ -30,22 +30,24 @@ export class ThreadComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    // Get the thread ID from the route parameters
+    this.loadThreadData();
+  }
+
+  private loadThreadData(): void {
     this.route.params.subscribe(params => {
       const threadId = +params['threadId'];
-      // Fetch the thread details using the threadService
-      this.threadsService.get(threadId).subscribe(
-        thread => this.thread = thread,
-        error => console.error(error)
-      );
-      // Fetch the comments for the thread using the commentsService
-      this.commentsService.getByThread(threadId).subscribe(
-        comments => this.comments = comments,
-        error => console.error(error)
-      );
+      this.loadThread(threadId);
     });
   }
+
+  private loadThread(threadId: number): void {
+    this.threadsService.get(threadId).subscribe(
+      thread => this.thread = thread,
+      error => console.error('Error fetching thread:', error)
+    );
+  }
 }
+
 
 
 

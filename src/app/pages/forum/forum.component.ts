@@ -32,7 +32,7 @@ export class ForumComponent implements OnInit {
     this.route.params.subscribe(params => {
       this.forumId = +params['forumId'];
       // Fetch the forum details using the forumService
-      this.forumsService.get(this.forumId).subscribe(
+      this.forumsService.getById(this.forumId).subscribe(
         forum => this.forum = forum,
         error => console.error(error)
       );
