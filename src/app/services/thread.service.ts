@@ -18,7 +18,7 @@ export class ThreadService {
     );
   }
 
-  get(id: number): Observable<Thread> {
+  getById(id: number): Observable<Thread> {
     const url = `${this.apiUrl}${id}`;
     return this.http.get<Thread>(url).pipe(
       catchError(this.handleError<Thread>(`get id=${id}`))

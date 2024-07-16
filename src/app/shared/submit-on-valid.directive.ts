@@ -9,8 +9,8 @@ import {Forum} from "../models/forum";
   selector: '[appSubmitOnValid]'
 })
 export class SubmitOnValidDirective {
-  @Input() threadId: number | null = null;
-  @Input() forum: Forum | null = null;
+  @Input() threadId?: number;
+  @Input() forum?: Forum;
 
   constructor(
     private threadsService: ThreadService,

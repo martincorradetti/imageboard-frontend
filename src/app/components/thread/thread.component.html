@@ -1,9 +1,10 @@
-<div *ngIf="isLoadingThreads">Loading threads...</div>
-<div *ngIf="errorMessage">{{ errorMessage }}</div>
+<ng-container *ngIf="!isLoadingThreads; else loadingThreads">
 
-<div *ngIf="!isLoadingThreads">
+  <div *ngIf="errorMessage">{{ errorMessage }}</div>
+
   <h3>Threads</h3>
-  <ul *ngIf="threads.length > 0">
+
+  <ul *ngIf="threads.length > 0; else noThreads">
     <li *ngFor="let thread of threads">
       <a [routerLink]="['./', thread.id]">
         {{ thread.title }}
@@ -11,20 +12,27 @@
     </li>
   </ul>
 
-  <div *ngIf="threads.length === 0">No threads yet.</div>
+  <ng-template #noThreads>
+    <div>No threads yet.</div>
+  </ng-template>
 
-  <div *ngIf="isLoadingThread">Loading thread details...</div>
-  <div *ngIf="thread && !isLoadingThread">
+
+  <ng-container *ngIf="thread; else loadingThread">
     <h2>{{ thread.title }}</h2>
     <p>{{ thread.content }}</p>
 
-    <div *ngIf="comments">
-      <app-comment *ngFor="let comment of comments" [comment]="comment"></app-comment>
-    </div>
-  </div>
+    <app-comment *ngFor="let comment of comments" [comment]="comment"></app-comment>
+  </ng-container>
 
+  <ng-template #loadingThread>
+    <div>Loading thread details...</div>
+  </ng-template>
   <router-outlet></router-outlet>
-</div>
+</ng-container>
+
+<ng-template #loadingThreads>
+  <div>Loading threads...</div>
+</ng-template>
 
 
 
