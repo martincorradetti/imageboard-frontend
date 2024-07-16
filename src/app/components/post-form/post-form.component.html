@@ -1,11 +1,23 @@
 <form [formGroup]="postForm" (ngSubmit)="onSubmit()">
   <mat-form-field *ngIf="!threadId">
-    <input matInput placeholder="Title" formControlName="title">
+    <mat-label>Title</mat-label>
+    <input matInput formControlName="title" placeholder="Enter thread title">
   </mat-form-field>
 
   <mat-form-field>
-    <textarea matInput placeholder="Content" formControlName="content"></textarea>
+    <mat-label>Content</mat-label>
+    <textarea matInput formControlName="content" placeholder="Enter your post content"></textarea>
   </mat-form-field>
 
-  <button mat-raised-button color="primary" type="submit">Submit</button>
+  <mat-form-field>
+    <mat-label>Name</mat-label>
+    <input matInput formControlName="name" placeholder="Enter your name">
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" type="submit" [disabled]="postForm.invalid || submitting">
+    {{ submitting ? 'Posting...' : 'Post' }}
+  </button>
+  <div *ngIf="error" class="error-message">{{ error }}</div>
 </form>
+
+

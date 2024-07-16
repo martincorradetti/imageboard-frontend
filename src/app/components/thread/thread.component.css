@@ -1,0 +1,19 @@
+.thread-item {
+  border: 1px solid #ccc; /* Add a subtle border */
+  padding: 10px;          /* Add some padding for better readability */
+  margin-bottom: 10px;     /* Space out the thread items */
+}
+
+.thread-item a {
+  text-decoration: none;   /* Remove default link underline */
+  color: inherit;        /* Inherit text color from parent */
+}
+
+.thread-content {
+  /* Add more styles to customize the appearance as needed */
+}
+
+.error-message {
+  color: red;
+  margin-bottom: 10px;
+}

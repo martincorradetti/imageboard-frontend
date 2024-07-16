@@ -1,6 +1,7 @@
 export interface Comment {
   id: number;
+  name: string;
   content: string;
+  imageUrl?: string;
   threadId: number;
-  // Add other properties as needed (e.g., author, timestamp, etc.)
 }

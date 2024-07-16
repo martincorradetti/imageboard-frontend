@@ -7,7 +7,7 @@ import { Comment } from '../models/comment';
 @Injectable({
   providedIn: 'root'
 })
-export class CommentsService {
+export class CommentService {
   private commentsApiUrl = '/api/comments/';
 
   constructor(private http: HttpClient) {}
@@ -19,7 +19,7 @@ export class CommentsService {
   }
 
   getById(id: number): Observable<Comment> {
-    const url = `${this.commentsApiUrl}${id}`;
+    const url = `${this.commentsApiUrl}${id}/`; // Include trailing slash for consistency
     return this.http.get<Comment>(url).pipe(
       catchError(this.handleError<Comment>(`getById id=${id}`))
     );
@@ -31,15 +31,15 @@ export class CommentsService {
     );
   }
 
-  update(comment: Comment): Observable<Comment> {
-    const url = `${this.commentsApiUrl}${comment.id}`;
+  update(comment: Comment): Observable<Comment> { // Update method now accepts a Comment object
+    const url = `${this.commentsApiUrl}${comment.id}/`; // Include trailing slash
     return this.http.put<Comment>(url, comment).pipe(
       catchError(this.handleError<Comment>('update'))
     );
   }
 
   delete(id: number): Observable<any> {
-    const url = `${this.commentsApiUrl}${id}`;
+    const url = `${this.commentsApiUrl}${id}/`; // Include trailing slash
     return this.http.delete<any>(url).pipe(
       catchError(this.handleError<any>('delete'))
     );
@@ -52,4 +52,5 @@ export class CommentsService {
     };
   }
 }
+
 

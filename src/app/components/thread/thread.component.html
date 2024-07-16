@@ -1,0 +1,32 @@
+<ng-container *ngIf="isLoading">Loading...</ng-container>
+
+<ng-container *ngIf="errorMessage">{{ errorMessage }}</ng-container>
+
+<ng-container *ngIf="!isLoading && !errorMessage">
+
+  <div *ngIf="!thread">
+    <h2>Threads in {{ forum.name }}</h2>
+    <div *ngIf="threads.length === 0">No threads yet. Start a discussion!</div>
+    <div *ngFor="let thread of threads">
+      <a [routerLink]="['.', thread.id]">
+        <h3>{{ thread.title }}</h3>
+      </a>
+    </div>
+  </div>
+
+  <div *ngIf="thread">
+    <h2>{{ thread.title }}</h2>
+    <p>{{ thread.content }}</p>
+
+    <div *ngFor="let comment of comments">
+      <app-comment [comment]="{id: 0 ,name: "",threadId:content: "",id: 0,threadId: 0, name:}"></app-comment>
+    </div>
+
+    <app-post-form [threadId]="thread.id" [forum]="forum"></app-post-form>
+    <router-outlet></router-outlet>
+  </div>
+
+</ng-container>
+
+
+

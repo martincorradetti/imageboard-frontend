@@ -1,0 +1,21 @@
+<div *ngIf="forums.length > 0">
+  <h2>All Forums</h2>
+  <ul>
+    <li *ngFor="let forum of forums">
+      <a [routerLink]="['/forums', forum.id]">{{ forum.name }}</a>
+    </li>
+  </ul>
+</div>
+
+<div *ngIf="isLoading">Loading...</div>
+<div *ngIf="!isLoading && forums.length === 0">No forums available yet.</div>
+<div *ngIf="error">An error occurred. Please try again later.</div>
+
+<div *ngIf="forum && !isLoading">
+  <h2>{{ forum.name }}</h2>
+  <p>{{ forum.description }}</p>
+  <router-outlet></router-outlet>
+</div>
+
+
+

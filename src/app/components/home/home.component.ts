@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
-import {ForumListComponent} from "../../components/forum-list/forum-list.component";
+import {ForumComponent} from "../forum/forum.component";
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   standalone: true,
   imports: [
-    ForumListComponent
+    ForumComponent
   ],
   styleUrls: ['./home.component.css']
 })

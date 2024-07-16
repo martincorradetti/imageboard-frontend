@@ -7,7 +7,7 @@ import { Forum } from '../models/forum';
 @Injectable({
   providedIn: 'root'
 })
-export class ForumsService {
+export class ForumService {
   private forumsApiUrl = '/api/forums/'; // Base URL for forum API endpoints
 
   constructor(private http: HttpClient) {}

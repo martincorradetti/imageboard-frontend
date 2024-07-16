@@ -1,11 +1,10 @@
-import { Comment } from './comment'; // Assuming you'll have a Comment model
+import { Comment } from './comment';
 
 export interface Thread {
   id: number;
   title: string;
-  content: string;
   forumId: number;
-  repliesCount?: number;
-  comments?: Comment[]; // Array of comments (optional, if you want to fetch comments eagerly)
-  // Add other properties as needed (e.g., creator, timestamp, etc.)
+  name: string;
+  content: string;
+  comments?: Comment[];
 }
