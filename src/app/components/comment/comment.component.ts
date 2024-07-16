@@ -1,11 +1,17 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { CommentService } from '../../services/comment.service';
 import { Comment } from '../../models/comment';
+import {FormsModule} from "@angular/forms";
+import {NgIf} from "@angular/common";
 
 @Component({
   selector: 'app-comment',
   templateUrl: './comment.component.html',
   standalone: true,
+  imports: [
+    FormsModule,
+    NgIf
+  ],
   styleUrls: ['./comment.component.css']
 })
 export class CommentComponent implements OnInit {
@@ -13,6 +19,10 @@ export class CommentComponent implements OnInit {
   comments: Comment[] = [];
   updatedComment: Comment = {} as Comment;
   updatedCommentId: number = 0;
+  @Input() comment!: Comment;
+  isEditing: any;
+  editedContent: any;
+  showActions: boolean | undefined;
 
   constructor(private commentService: CommentService) {}
 
@@ -31,6 +41,18 @@ export class CommentComponent implements OnInit {
       },
       error: (error: any) => console.error('Error updating comment:', error)
     });
+  }
+
+  onSaveEdit() {
+
+  }
+
+  onCancelEdit() {
+
+  }
+
+  onEdit() {
+
   }
 }
 

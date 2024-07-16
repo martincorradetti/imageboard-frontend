@@ -1,18 +1,23 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-import { ActivatedRoute, RouterLink, RouterOutlet } from '@angular/router';
+import {ActivatedRoute, RouterLink, RouterOutlet} from '@angular/router';
 import { Thread } from '../../models/thread';
 import { ThreadService } from '../../services/thread.service';
 import { Comment } from '../../models/comment';
 import { CommentService } from '../../services/comment.service';
-import { PostFormComponent } from '../post-form/post-form.component';
-import { NgForOf, NgIf } from '@angular/common';
-import { CommentComponent } from '../comment/comment.component';
+import {CommentComponent} from "../comment/comment.component";
+import {NgForOf, NgIf} from "@angular/common";
 
 @Component({
   selector: 'app-thread',
   templateUrl: './thread.component.html',
   standalone: true,
-  imports: [NgForOf, RouterLink, NgIf, PostFormComponent, RouterOutlet, CommentComponent],
+  imports: [
+    RouterLink,
+    CommentComponent,
+    RouterOutlet,
+    NgIf,
+    NgForOf
+  ],
   styleUrls: ['./thread.component.css']
 })
 export class ThreadComponent implements OnInit, OnDestroy {
@@ -25,22 +30,21 @@ export class ThreadComponent implements OnInit, OnDestroy {
   isLoadingThread = false;
   errorMessage: string | null = null;
 
-  private routeSubscription: any; // Store the subscription
+  private routeSubscription: any;
 
   constructor(
     private route: ActivatedRoute,
-    private threadsService: ThreadService,
+    private threadService: ThreadService,
     private commentService: CommentService
   ) {}
 
-  ngOnInit() {
-    this.loadThreads(); // Start loading threads immediately
+  ngOnInit(): void {
+    this.loadThreads();
 
-    // Observe threadId changes using a subscription
     this.routeSubscription = this.route.params.subscribe(params => {
       const threadId = +params['threadId'];
       if (threadId) {
-        this.loadThread(threadId); // Load specific thread if threadId exists
+        this.loadThread(threadId);
       } else {
         this.thread = undefined;
         this.comments = [];
@@ -49,8 +53,9 @@ export class ThreadComponent implements OnInit, OnDestroy {
     });
   }
 
-  loadThreads() {
-    this.threadsService.getByForum(this.forumId).subscribe(
+  loadThreads(): void {
+    this.isLoadingThreads = true;
+    this.threadService.getByForum(this.forumId).subscribe(
       (threads) => {
         this.threads = threads;
         this.isLoadingThreads = false;
@@ -61,13 +66,13 @@ export class ThreadComponent implements OnInit, OnDestroy {
     );
   }
 
-  loadThread(threadId: number) {
+  loadThread(threadId: number): void {
     this.isLoadingThread = true;
-    this.threadsService.getById(threadId).subscribe(
+    this.threadService.getById(threadId).subscribe(
       (thread) => {
         this.thread = thread;
         if (thread) {
-          this.loadComments(thread.id); // Load comments for the thread
+          this.loadComments(thread.id);
         } else {
           this.isLoadingThread = false;
         }
@@ -78,7 +83,7 @@ export class ThreadComponent implements OnInit, OnDestroy {
     );
   }
 
-  loadComments(threadId: number) {
+  loadComments(threadId: number): void {
     this.commentService.getByThread(threadId).subscribe(
       (comments) => {
         this.comments = comments;
@@ -90,15 +95,14 @@ export class ThreadComponent implements OnInit, OnDestroy {
     );
   }
 
-  private handleError(message: string, error: any) {
+  private handleError(message: string, error: any): void {
     this.errorMessage = message;
     console.error(error);
     this.isLoadingThreads = false;
     this.isLoadingThread = false;
   }
 
-  ngOnDestroy() {
-    // Unsubscribe from the route params subscription when the component is destroyed
+  ngOnDestroy(): void {
     if (this.routeSubscription) {
       this.routeSubscription.unsubscribe();
     }
