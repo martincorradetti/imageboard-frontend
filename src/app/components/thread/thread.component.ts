@@ -1,15 +1,14 @@
-import { Component, OnInit, inject, Input, OnDestroy } from '@angular/core';
+import {Component, OnInit, Input, OnDestroy, inject} from '@angular/core';
 import { ActivatedRoute, RouterLink, RouterOutlet } from '@angular/router';
 import { Thread } from '../../models/thread';
 import { ThreadService } from '../../services/thread.service';
 import { Comment } from '../../models/comment';
 import { CommentService } from '../../services/comment.service';
 import { PostFormComponent } from '../post-form/post-form.component';
-import {AsyncPipe, NgForOf, NgIf} from '@angular/common';
-import { Forum } from '../../models/forum';
+import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
 import { CommentComponent } from '../comment/comment.component';
-import {switchMap, EMPTY, Observable, of, Subject, takeUntil, tap} from 'rxjs';
-import {catchError} from "rxjs/operators"; // Import RxJS operators
+import { switchMap, EMPTY, Observable, of, Subject, takeUntil, tap } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-thread',
@@ -19,10 +18,10 @@ import {catchError} from "rxjs/operators"; // Import RxJS operators
   styleUrls: ['./thread.component.css']
 })
 export class ThreadComponent implements OnInit, OnDestroy {
-  @Input() forum!: Forum;
-  threads$: Observable<Thread[]> = of([]);
-  thread$: Observable<Thread | undefined> = of(undefined);
-  comments$: Observable<Comment[]> = of([]);
+  @Input() forumId!: number;
+  threads: Thread[] = []; // Store filtered threads for the forum
+  thread: Thread | undefined;
+  comments: Comment[] = [];
 
   isLoadingThreads = true;
   isLoadingThread = true;
@@ -34,50 +33,49 @@ export class ThreadComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   ngOnInit() {
-    this.route.params.pipe(
+    this.threadsService.getByForum(this.forumId).subscribe({
+      next: (threads) => {
+        this.threads = threads;
+        this.isLoadingThreads = false;
+      },
+      error: (error) => {
+        this.errorMessage = 'Error fetching threads. Please try again later.';
+        console.error('Error fetching threads:', error);
+        this.isLoadingThreads = false;
+      }
+    });
+
+    this.route.paramMap.pipe(
       switchMap(params => {
-        const forumId = +params['forumId'];
-        const threadId = +params['threadId'];
-
-        this.threads$ = this.threadsService.getByForum(forumId).pipe(
-          tap(() => this.isLoadingThreads = false),
-          catchError(error => {
-            this.errorMessage = 'Error fetching threads. Please try again later.';
-            console.error('Error fetching threads:', error);
-            return EMPTY; // Return an empty observable on error
-          })
-        );
-
+        // @ts-ignore
+        const threadId = +params.get('threadId');
         if (threadId) {
-          this.thread$ = this.threadsService.get(threadId).pipe(
-            tap(thread => {
-              if (thread) {
-                this.comments$ = this.commentService.getByThread(threadId).pipe(
-                  tap(() => this.isLoadingThread = false),
-                  catchError(error => {
-                    console.error('Error fetching comments:', error);
-                    return of([]);
-                  })
-                );
-              } else {
-                this.comments$ = of([]);
-              }
-            }),
-            catchError(error => {
-              this.errorMessage = 'Error fetching thread details. Please try again later.';
-              console.error('Error fetching thread:', error);
-              return of(undefined); // Return undefined on error
-            })
-          );
+          this.isLoadingThread = true;
+          return this.threadsService.get(threadId);
         } else {
-          this.thread$ = of(undefined);
+          this.thread = undefined;
+          this.comments = [];
           this.isLoadingThread = false;
+          return of(undefined);
         }
-
-        return this.threads$; // Return the observable for further processing (optional)
       }),
-      takeUntil(this.destroy$) // Unsubscribe when component is destroyed
-    ).subscribe();
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: (thread) => {
+        this.thread = thread;
+        if (thread) {
+          this.commentService.getByThread(thread.id).subscribe(comments => {
+            this.comments = comments;
+            this.isLoadingThread = false;
+          });
+        }
+      },
+      error: (error) => {
+        this.errorMessage = 'Error fetching thread details. Please try again later.';
+        this.isLoadingThread = false;
+        console.error('Error fetching thread:', error);
+      }
+    });
   }
 
   ngOnDestroy() {
@@ -85,5 +83,6 @@ export class ThreadComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 }
+
 
 

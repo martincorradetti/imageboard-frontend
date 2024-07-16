@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import {forkJoin, Observable, of, switchMap} from 'rxjs';
+import {catchError, map} from 'rxjs/operators';
 import { Forum } from '../models/forum';
 
 @Injectable({
@@ -9,13 +9,10 @@ import { Forum } from '../models/forum';
 })
 export class ForumService {
   private forumsApiUrl = '/api/forums/'; // Base URL for forum API endpoints
-
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
 
   getAll(): Observable<Forum[]> {
-    return this.http.get<Forum[]>(this.forumsApiUrl).pipe(
-      catchError(this.handleError<Forum[]>('getAllForums', []))
-    );
+    return this.http.get<Forum[]>(this.forumsApiUrl);
   }
 
   getById(id: number): Observable<Forum> {
