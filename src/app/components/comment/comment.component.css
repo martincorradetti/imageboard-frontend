@@ -1,0 +1,21 @@
+/* comment.component.css */
+.comment {
+  /* ... Your comment styling ... */
+}
+
+.comment-header {
+  /* ... Styling for the author and timestamp ... */
+}
+
+.comment-content {
+  /* ... Styling for the comment text ... */
+}
+
+.comment-content img {
+  max-width: 100%;
+  height: auto;
+}
+
+.comment-actions {
+  /* ... Styling for action buttons ... */
+}
