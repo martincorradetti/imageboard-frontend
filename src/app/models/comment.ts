@@ -1,7 +1,7 @@
 export interface Comment {
-  id: number;
+  id: number
   name: string;
+  threadId: number,
   content: string;
   imageUrl?: string;
-  threadId: number;
 }

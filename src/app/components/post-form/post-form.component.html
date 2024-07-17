@@ -1,5 +1,12 @@
-<form #postForm="ngForm" appSubmitOnValid [threadId]="threadId" [forumId]="forumId">
-  <textarea name="content" ngModel required></textarea>
-  <button type="submit">Post</button>
+<form #postForm="ngForm" (ngSubmit)="onSubmit(postForm)">
   <div *ngIf="error" class="error-message">{{ error }}</div>
+  <div>
+    <label for="content">Content:</label>
+    <textarea id="content" name="content" ngModel required></textarea>
+  </div>
+  <div>
+    <label for="imageUrl">Image URL:</label>
+    <input id="imageUrl" name="imageUrl" ngModel />
+  </div>
+  <button type="submit">Submit</button>
 </form>

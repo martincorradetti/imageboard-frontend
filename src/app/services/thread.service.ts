@@ -8,7 +8,7 @@ import { Thread } from '../models/thread';
   providedIn: 'root'
 })
 export class ThreadService {
-  private forumsApiUrl = '/api/forums/'; // API URL for forums
+  private forumsApiUrl = '/api/forums/';
 
   constructor(private http: HttpClient) {}
 
