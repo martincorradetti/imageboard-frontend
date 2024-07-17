@@ -1,5 +1,5 @@
-import {Component, Input, inject, numberAttribute} from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {Component, Input, inject, numberAttribute, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup, FormsModule, NgForm, ReactiveFormsModule, Validators} from '@angular/forms';
 import { Forum } from '../../models/forum';
 import { Thread } from '../../models/thread';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -20,75 +20,47 @@ import { CommentService } from '../../services/comment.service';
     MatInputModule,
     MatFormFieldModule,
     MatButton,
-    SubmitOnValidDirective
+    SubmitOnValidDirective,
+    FormsModule
   ],
   styleUrls: ['./post-form.component.css']
 })
-export class PostFormComponent {
-  @Input({ transform: numberAttribute }) threadId!: number; // For replies
-  @Input() forum!: Forum;
+export class PostFormComponent implements OnInit {
+  forumId: number = 0;
+  threadId: number = 0;
+  error: string | undefined;
 
-  postForm!: FormGroup;
-  error: string | null = null;
+  constructor(
+    private threadService: ThreadService,
+    private commentService: CommentService
+  ) {}
 
-  // Inject the services
-  private threadService = inject(ThreadService);
-  private commentService = inject(CommentService);
-
-  constructor(private fb: FormBuilder) {
-    this.postForm = this.fb.group({
-      title: [''],
-      content: [''],
-      name: ['']
-    });
-
-    if (this.threadId) {
-      this.postForm.removeControl('title');
-    }
+  ngOnInit(): void {
+    // Initialize forumId and threadId as needed
   }
 
-  onSubmit() {
-    if (this.postForm.valid) {
-      if (this.threadId) {
-        // Creating a comment
-        this.commentService.create(this.postForm.value).subscribe({
-          next: () => {
-            this.postForm.reset(); // Clear the form after successful submission
-            // Optionally, emit an event to notify parent components about the new comment
-          },
-          error: (error) => {
-            this.handleError('Error creating comment.', error);
-          }
-        });
-      } else {
-        // Creating a thread
-        // Construct the Thread object with forumId
-        const newThread: Thread = {
-          ...this.postForm.value,
-          forumId: this.forum.id,
-          // Add any other necessary properties like date, etc.
-        };
+  onSubmit(postForm: NgForm): void {
+    if (postForm.invalid) {
+      return;
+    }
 
-        this.threadService.create(newThread).subscribe({
-          next: () => {
-            this.postForm.reset();
-            // Optionally, navigate to the newly created thread
-          },
-          error: (error) => {
-            this.handleError('Error creating thread.', error);
-          }
-        });
+    const formData = postForm.value;
+    const newComment = {
+      id: 0,
+      name: '',
+      threadId: this.threadId,
+      content: formData.content
+    };
+
+    this.commentService.create(this.forumId, this.threadId, newComment).subscribe({
+      next: (createdComment) => {
+        console.log('Comment created:', createdComment);
+        // Handle success, e.g., show success message, clear form, etc.
+      },
+      error: (error) => {
+        console.error('Error creating comment:', error);
+        this.error = 'Failed to create comment'; // Example of error handling
       }
-    }
-  }
-
-  private handleError(message: string, error: any) {
-    this.error = message;
-    console.error(error);
+    });
   }
 }
-
-
-
-
-

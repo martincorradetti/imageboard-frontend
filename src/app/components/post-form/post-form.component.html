@@ -1,22 +1,5 @@
-<form [formGroup]="postForm" appSubmitOnValid [threadId]="threadId" [forum]="forum">
-  <mat-form-field *ngIf="!threadId">
-    <mat-label>Title</mat-label>
-    <input matInput formControlName="title" placeholder="Enter thread title">
-  </mat-form-field>
-
-  <mat-form-field>
-    <mat-label>Content</mat-label>
-    <textarea matInput formControlName="content" placeholder="Enter your post content"></textarea>
-  </mat-form-field>
-
-  <mat-form-field>
-    <mat-label>Name</mat-label>
-    <input matInput formControlName="name" placeholder="Enter your name">
-  </mat-form-field>
-
-  <button mat-raised-button color="primary" type="submit">Post</button>
+<form #postForm="ngForm" appSubmitOnValid [threadId]="threadId" [forumId]="forumId">
+  <textarea name="content" ngModel required></textarea>
+  <button type="submit">Post</button>
   <div *ngIf="error" class="error-message">{{ error }}</div>
 </form>
-
-
-

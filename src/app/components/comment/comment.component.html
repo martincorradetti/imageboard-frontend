@@ -1,18 +1,16 @@
-<div class="comment">
-  <div class="comment-content" *ngIf="!isEditing">
-    <p>{{ comment.content }}</p>
-    <img *ngIf="comment.imageUrl" [src]="comment.imageUrl" alt="Comment image">
+<div *ngFor="let comment of comments">
+  <p>{{ comment.content }}</p>
+  <img *ngIf="comment.imageUrl" [src]="comment.imageUrl" alt="Comment image">
+  <div class="comment-actions" *ngIf="!isEditing">
+    <button (click)="toggleEdit(comment)">Edit</button>
+    <button (click)="deleteComment(comment.id)">Delete</button>
   </div>
-
-  <div class="comment-edit-form" *ngIf="isEditing">
+  <div *ngIf="isEditing && editedCommentId === comment.id">
     <textarea [(ngModel)]="editedContent"></textarea>
     <button (click)="onSaveEdit()">Save</button>
     <button (click)="onCancelEdit()">Cancel</button>
   </div>
-
-  <div class="comment-actions" *ngIf="showActions && !isEditing">
-    <button (click)="onEdit()">Edit</button>
-  </div>
 </div>
+
 
 

@@ -1,37 +1,35 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-import {ActivatedRoute, RouterLink, RouterOutlet} from '@angular/router';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Thread } from '../../models/thread';
 import { ThreadService } from '../../services/thread.service';
 import { Comment } from '../../models/comment';
 import { CommentService } from '../../services/comment.service';
-import {CommentComponent} from "../comment/comment.component";
-import {NgForOf, NgIf} from "@angular/common";
+import { NgIf, NgForOf } from '@angular/common';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-thread',
   templateUrl: './thread.component.html',
   standalone: true,
-  imports: [
-    RouterLink,
-    CommentComponent,
-    RouterOutlet,
-    NgIf,
-    NgForOf
-  ],
+  imports: [NgIf, NgForOf],
   styleUrls: ['./thread.component.css']
 })
 export class ThreadComponent implements OnInit, OnDestroy {
-  @Input() forumId: number | undefined; // Define forumId as an input property
-
+  forumId: number | undefined;
   threads: Thread[] = [];
   isLoadingThreads = true;
   errorMessage: string | null = null;
+  selectedThread: Thread | undefined;
+  comments: Comment[] = [];
+  isLoadingComments = false;
+  commentError: string | null = null;
 
-  private routeSubscription: any;
+  private routeSubscription: Subscription | undefined;
 
   constructor(
     private route: ActivatedRoute,
-    private threadService: ThreadService
+    private threadService: ThreadService,
+    private commentService: CommentService
   ) {}
 
   ngOnInit(): void {
@@ -44,11 +42,11 @@ export class ThreadComponent implements OnInit, OnDestroy {
   loadThreads(): void {
     if (this.forumId) {
       this.threadService.getByForum(this.forumId).subscribe(
-        (threads) => {
+        (threads: Thread[]) => {
           this.threads = threads;
           this.isLoadingThreads = false;
         },
-        (error) => {
+        (error: any) => {
           this.handleError('Error fetching threads.', error);
         }
       );
@@ -56,6 +54,27 @@ export class ThreadComponent implements OnInit, OnDestroy {
       this.isLoadingThreads = false;
       this.errorMessage = 'Forum ID not provided.';
     }
+  }
+
+  onSelectThread(thread: Thread): void {
+    this.selectedThread = thread;
+    this.loadComments(thread.id);
+  }
+
+  loadComments(threadId: number): void {
+    this.isLoadingComments = true;
+    this.commentError = null;
+    this.commentService.getCommentsForThread(threadId).subscribe(
+      (comments: Comment[]) => {
+        this.comments = comments;
+        this.isLoadingComments = false;
+      },
+      (error: any) => {
+        this.commentError = 'Error fetching comments.';
+        console.error('Error fetching comments:', error);
+        this.isLoadingComments = false;
+      }
+    );
   }
 
   private handleError(message: string, error: any): void {
@@ -70,6 +89,3 @@ export class ThreadComponent implements OnInit, OnDestroy {
     }
   }
 }
-
-
-

@@ -9,32 +9,36 @@ import {Forum} from "../models/forum";
   selector: '[appSubmitOnValid]'
 })
 export class SubmitOnValidDirective {
-  @Input() threadId?: number;
-  @Input() forum?: Forum;
+  @Input() forumId!: number;
+  @Input() threadId!: number;
+  @Input() form!: NgForm; // Reference to the NgForm instance
 
-  constructor(
-    private threadsService: ThreadService,
-    private commentsService: CommentService
-  ) {}
+  constructor(private commentService: CommentService) {}
 
   @HostListener('ngSubmit')
-  onSubmit(form: NgForm) {
-    if (form.valid && this.forum) { // Check if form and forum are valid
-      const formData = form.value;
-
-      if (this.threadId) {
-        this.commentsService.create({ ...formData, threadId: this.threadId })
-          .subscribe(
-            _ => form.resetForm(), // Reset form on success
-            error => console.error('Error creating comment:', error) // Handle errors
-          );
-      } else {
-        this.threadsService.create({ ...formData, forumId: this.forum.id })
-          .subscribe(
-            _ => form.resetForm(), // Reset form on success
-            error => console.error('Error creating thread:', error) // Handle errors
-          );
-      }
+  onSubmit(): void {
+    if (this.form.invalid) {
+      return;
     }
+
+    const formData = this.form.value;
+    const newComment = {
+      id: 0,
+      name: '',
+      threadId: this.threadId,
+      content: formData.content
+      // Add other fields as needed
+    };
+
+    this.commentService.create(this.forumId, this.threadId, newComment).subscribe({
+      next: (createdComment) => {
+        console.log('Comment created:', createdComment);
+        // Handle success, e.g., show success message, clear form, etc.
+      },
+      error: (error) => {
+        console.error('Error creating comment:', error);
+        // Handle error, e.g., show error message
+      }
+    });
   }
 }

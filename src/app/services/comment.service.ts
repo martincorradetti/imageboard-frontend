@@ -1,75 +1,29 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { Comment } from '../models/comment';
-
-interface CommentFilters {
-  threadId?: number;
-  [key: string]: any; // Allow for future filters
-}
 
 @Injectable({
   providedIn: 'root'
 })
 export class CommentService {
-  private apiUrl = '/api/comments/';
+  private baseUrl = 'https://api.example.com'; // Replace with your actual backend API URL
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<Comment[]> {
-    return this.http.get<Comment[]>(this.apiUrl).pipe(
-      catchError(this.handleError<Comment[]>('getAll', []))
-    );
+  getCommentsForThread(threadId: number): Observable<Comment[]> {
+    return this.http.get<Comment[]>(`${this.baseUrl}/threads/${threadId}/comments`);
   }
 
-  getById(id: number): Observable<Comment> {
-    const url = `${this.apiUrl}${id}`;
-    return this.http.get<Comment>(url).pipe(
-      catchError(this.handleError<Comment>(`getById id=${id}`))
-    );
+  create(forumId: number, threadId: number, comment: Comment): Observable<Comment> {
+    return this.http.post<Comment>(`${this.baseUrl}/forums/${forumId}/threads/${threadId}/comments`, comment);
   }
 
-  getByThread(threadId: number, filters?: CommentFilters): Observable<Comment[]> {
-    let params = new HttpParams();
-    if (filters) {
-      for (const key in filters) {
-        params = params.append(key, filters[key]);
-      }
-    }
-    return this.http.get<Comment[]>(`${this.apiUrl}thread/${threadId}`, { params }).pipe(
-      catchError(this.handleError<Comment[]>('getByThread', []))
-    );
+  update(forumId: number, threadId: number, commentId: number, comment: Comment): Observable<Comment> {
+    return this.http.put<Comment>(`${this.baseUrl}/forums/${forumId}/threads/${threadId}/comments/${commentId}`, comment);
   }
 
-  create(comment: Comment): Observable<Comment> {
-    return this.http.post<Comment>(this.apiUrl, comment).pipe(
-      catchError(this.handleError<Comment>('create'))
-    );
-  }
-
-  update(id: number, comment: Comment): Observable<Comment> {
-    const url = `${this.apiUrl}${id}`;
-    return this.http.put<Comment>(url, comment).pipe(
-      catchError(this.handleError<Comment>('update'))
-    );
-  }
-
-  delete(id: number): Observable<any> {
-    const url = `${this.apiUrl}${id}`;
-    return this.http.delete<any>(url).pipe(
-      catchError(this.handleError<any>('delete'))
-    );
-  }
-
-  private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-      console.error(`${operation} failed: ${error.message}`); // log to console instead
-      return of(result as T); // let the app keep running by returning an empty result
-    };
+  delete(forumId: number, threadId: number, commentId: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/forums/${forumId}/threads/${threadId}/comments/${commentId}`);
   }
 }
-
-
-
-
