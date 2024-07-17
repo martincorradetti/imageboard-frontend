@@ -8,39 +8,40 @@ import { Thread } from '../models/thread';
   providedIn: 'root'
 })
 export class ThreadService {
-  private apiUrl = '/api/threads/';
+  private forumsApiUrl = '/api/forums/'; // API URL for forums
 
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<Thread[]> {
-    return this.http.get<Thread[]>(this.apiUrl)
-      .pipe(catchError(this.handleError<Thread[]>('getAll', [])));
+    return this.http.get<Thread[]>('/api/threads/')
+      .pipe(catchError(this.handleError<Thread[]>('getAll')));
   }
 
   getById(id: number): Observable<Thread> {
-    const url = `${this.apiUrl}${id}`;
+    const url = `/api/threads/${id}`;
     return this.http.get<Thread>(url)
       .pipe(catchError(this.handleError<Thread>(`getById id=${id}`)));
   }
 
   getByForum(forumId: number): Observable<Thread[]> {
-    return this.http.get<Thread[]>(`${this.apiUrl}?forumId=${forumId}`)
-      .pipe(catchError(this.handleError<Thread[]>('getByForum', [])));
+    const url = `${this.forumsApiUrl}${forumId}/threads`;
+    return this.http.get<Thread[]>(url)
+      .pipe(catchError(this.handleError<Thread[]>('getByForum')));
   }
 
   create(thread: Thread): Observable<Thread> {
-    return this.http.post<Thread>(this.apiUrl, thread)
+    return this.http.post<Thread>('/api/threads/', thread)
       .pipe(catchError(this.handleError<Thread>('create')));
   }
 
   update(id: number, thread: Thread): Observable<Thread> {
-    const url = `${this.apiUrl}${id}`;
+    const url = `/api/threads/${id}`;
     return this.http.put<Thread>(url, thread)
       .pipe(catchError(this.handleError<Thread>('update')));
   }
 
   delete(id: number): Observable<void> {
-    const url = `${this.apiUrl}${id}`;
+    const url = `/api/threads/${id}`;
     return this.http.delete<void>(url)
       .pipe(catchError(this.handleError<void>('delete')));
   }
@@ -52,6 +53,3 @@ export class ThreadService {
     };
   }
 }
-
-
-

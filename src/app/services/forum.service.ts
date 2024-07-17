@@ -8,41 +8,46 @@ import { Forum } from '../models/forum';
   providedIn: 'root'
 })
 export class ForumService {
-  private forumsApiUrl = '/api/forums/'; // Base URL for forum API endpoints
+  private forumsApiUrl = '/api/forums/';
 
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<Forum[]> {
-    return this.http.get<Forum[]>(this.forumsApiUrl).pipe(
-      catchError(this.handleError<Forum[]>('getAll', []))
-    );
+    return this.http.get<Forum[]>(this.forumsApiUrl)
+      .pipe(
+        catchError(this.handleError<Forum[]>('getAll', []))
+      );
   }
 
   getById(id: number): Observable<Forum> {
     const url = `${this.forumsApiUrl}${id}`;
-    return this.http.get<Forum>(url).pipe(
-      catchError(this.handleError<Forum>(`getById id=${id}`))
-    );
+    return this.http.get<Forum>(url)
+      .pipe(
+        catchError(this.handleError<Forum>(`getById id=${id}`))
+      );
   }
 
   create(forum: Forum): Observable<Forum> {
-    return this.http.post<Forum>(this.forumsApiUrl, forum).pipe(
-      catchError(this.handleError<Forum>('create'))
-    );
+    return this.http.post<Forum>(this.forumsApiUrl, forum)
+      .pipe(
+        catchError(this.handleError<Forum>('create'))
+      );
   }
 
   update(forum: Forum): Observable<Forum> {
     const url = `${this.forumsApiUrl}${forum.id}`;
-    return this.http.put<Forum>(url, forum).pipe(
-      catchError(this.handleError<Forum>('update'))
-    );
+    return this.http.put<Forum>(url, forum)
+      .pipe(
+        catchError(this.handleError<Forum>('update'))
+      );
   }
 
   delete(id: number): Observable<any> {
     const url = `${this.forumsApiUrl}${id}`;
-    return this.http.delete<any>(url).pipe(
-      catchError(this.handleError<any>('delete'))
-    );
+    return this.http.delete<any>(url)
+      .pipe(
+        catchError(this.handleError<any>('delete'))
+      );
   }
 
   private handleError<T>(operation = 'operation', result?: T) {
@@ -52,5 +57,3 @@ export class ForumService {
     };
   }
 }
-
-

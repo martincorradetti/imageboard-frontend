@@ -1,6 +1,6 @@
-<div *ngIf="isLoading">Loading...</div>
+<div *ngIf="isLoadingForums">Loading forums...</div>
 
-<div *ngIf="!isLoading && forums.length > 0">
+<div *ngIf="!isLoadingForums && forums.length > 0">
   <h2>All Forums</h2>
   <ul>
     <li *ngFor="let forum of forums">
@@ -9,17 +9,24 @@
   </ul>
 </div>
 
-<div *ngIf="!isLoading && forums.length === 0">No forums available yet.</div>
-<div *ngIf="error">{{ error }}</div>
+<div *ngIf="!isLoadingForums && forums.length === 0">No forums available yet.</div>
 
 <div *ngIf="selectedForum">
   <h2>{{ selectedForum.name }}</h2>
   <p>{{ selectedForum.description }}</p>
 
-  <app-thread *ngIf="!isLoading" [forumId]="selectedForum.id"></app-thread>
+  <div *ngIf="isLoadingThreads">Loading threads...</div>
 
-  <router-outlet></router-outlet>
+  <ul *ngIf="!isLoadingThreads">
+    <li *ngFor="let thread of threads">
+      <a [routerLink]="['/forums', selectedForum.id, 'threads', thread.id]">{{ thread.title }}</a>
+    </li>
+  </ul>
 </div>
+
+<div *ngIf="!selectedForum && !isLoadingForums">Forum ID not provided.</div>
+
+<div *ngIf="error">{{ error }}</div>
 
 
 

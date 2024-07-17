@@ -10,30 +10,12 @@
 <div *ngIf="threads.length > 0">
   <ul>
     <li *ngFor="let thread of threads">
-      <!-- Display thread details -->
       <h3>{{ thread.title }}</h3>
       <p>{{ thread.content }}</p>
+      <!-- Adjust routing based on your application needs -->
+      <a [routerLink]="['/forums', forumId, 'threads', thread.id]">View Thread</a>
     </li>
   </ul>
-</div>
-<div *ngIf="isLoadingThread">
-  Loading thread...
-</div>
-<div *ngIf="thread">
-  <!-- Display thread details -->
-  <h3>{{ thread.title }}</h3>
-  <p>{{ thread.content }}</p>
-</div>
-<div *ngIf="comments.length > 0">
-  <ul>
-    <li *ngFor="let comment of comments">
-      <!-- Display comment details -->
-      <p>{{ comment.content }}</p>
-    </li>
-  </ul>
-</div>
-<div *ngIf="!isLoadingThread && comments.length === 0">
-  No comments found.
 </div>
 
 
